@@ -1,21 +1,54 @@
 <template>
   <div class="login-container">
-    <el-form ref="loginForm" class="login-form" label-position="left">
+    <el-form
+      ref="loginForm"
+      class="login-form"
+      label-position="left"
+      :model="loginForm"
+      :rules="rules"
+    >
       <div class="title-container">
         <h3 class="title">
           <img src="@/assets/common/login-logo.png" alt="" />
         </h3>
       </div>
 
+      <!-- svg-container 是样式前缀 -->
+      <!-- 手机号 -->
+      <el-form-item prop="mobile">
+        <span class="svg-container el-icon-user-solid"></span>
+        <el-input
+          placeholder="请输入账号"
+          v-model="loginForm.mobile"
+        ></el-input>
+      </el-form-item>
+      <!-- 密码 -->
+      <el-form-item prop="password">
+        <span class="svg-container">
+          <svg-icon icon-class="password"></svg-icon>
+        </span>
+        <el-input
+          placeholder="请输入密码"
+          ref="pwd"
+          :type="pwdType"
+          v-model="loginForm.password"
+        ></el-input>
+        <span class="svg-container">
+          <svg-icon
+            :icon-class="pwdType === 'password' ? 'eye' : 'eye-open'"
+            @click="changeType"
+          ></svg-icon>
+        </span>
+      </el-form-item>
+
+      <!-- 登录 -->
       <el-button
-        :loading="loading"
         class="loginBtn"
         type="primary"
         style="width: 100%; margin-bottom: 30px"
         @click.native.prevent="handleLogin"
         >Login</el-button
       >
-
       <!-- 修改显示的提示文本和登录文本 -->
       <div class="tips">
         <span style="margin-right: 20px">账号: 13800000002</span>
@@ -26,12 +59,54 @@
 </template>
 
 <script>
+import { validMobile } from "@/utils/validate";
 export default {
   name: "Login",
   data() {
-    return {};
+    const validatorMobile = (rule, value, callback) => {
+      if (validMobile(value)) {
+        return callback();
+      }
+      return callback(new Error("手机号格式不对"));
+    };
+    return {
+      pwdType: "password",
+      loginForm: {
+        mobile: "13800000002",
+        password: "123456",
+      },
+      rules: {
+        mobile: [
+          { required: true, message: "手机号不能为空", trigger: "blur" },
+          // {
+          //   pattern:
+          //     /^(?:(?:\+|00)86)?1(?:(?:3[\d])|(?:4[5-79])|(?:5[0-35-9])|(?:6[5-7])|(?:7[0-8])|(?:8[\d])|(?:9[189]))\d{8}$/,
+          //   message: "手机号格式不正确",
+          //   trigger: "blur",
+          // },
+          { validator: validatorMobile, trigger: "blur" },
+        ],
+        password: [
+          { required: true, message: "密码不能为空", trigger: "blur" },
+          { min: 6, max: 16, message: "密码格式不正确", trigger: "blur" },
+        ],
+      },
+    };
   },
-  methods: {},
+  methods: {
+    changeType() {
+      //1.切换密码框的type值
+      this.pwdType === "password"
+        ? (this.pwdType = "")
+        : (this.pwdType = "password");
+      //2.眼睛切换
+      //3.输入框聚焦
+      // dom更新是异步的 上面修改完type值,这里还不能立刻获取到dom,所以用$nextTick()等dom更新完再focus()聚焦
+      this.$nextTick(() => {
+        this.$refs.pwd.focus();
+      });
+    },
+  },
 };
 </script>
 
