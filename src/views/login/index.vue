@@ -45,9 +45,10 @@
       <el-button
         class="loginBtn"
         type="primary"
+        :loading="loading"
         style="width: 100%; margin-bottom: 30px"
-        @click.native.prevent="handleLogin"
-        >Login</el-button
+        @click="onLogin"
+        >登录</el-button
       >
       <!-- 修改显示的提示文本和登录文本 -->
       <div class="tips">
@@ -75,6 +76,7 @@ export default {
         mobile: "13800000002",
         password: "123456",
       },
+      loading: false,
       rules: {
         mobile: [
           { required: true, message: "手机号不能为空", trigger: "blur" },
@@ -105,6 +107,22 @@ export default {
       this.$nextTick(() => {
         this.$refs.pwd.focus();
       });
+    },
+    async onLogin() {
+      try {
+        const res = await this.$refs.loginForm.validate(); //promise
+        this.loading = true;
+        console.log(res);
+        this.$store.dispatch("user/login", this.loginForm); //调用login模块的actions,把token存到vuex
+        // this.loading = false;
+        //登录以后实现页面跳转 但是刷新过后,token消失,需要用cookie实现持久化
+        this.$router.push("/");
+      } catch (e) {
+        console.log(e);
+        // this.loading = false;
+      } finally {
+        this.loading = false;
+      }
     },
   },
 };
