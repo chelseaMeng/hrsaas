@@ -12,7 +12,7 @@ const service = axios.create({
 });
 
 //定义超时时间
-const timeout = 10; //单位是秒
+const timeout = 3600; //单位是秒 修改为1小时
 
 //封装判断时间是否超时的函数
 function isCheckOut() {
