@@ -113,7 +113,9 @@ export default {
         const res = await this.$refs.loginForm.validate(); //promise
         this.loading = true;
         console.log(res);
-        this.$store.dispatch("user/login", this.loginForm); //调用login模块的actions,把token存到vuex
+        //在组件中调用带命名空间的action
+        //dispatch是异步的,返回一个promise需要加async await  异步转同步
+        await this.$store.dispatch("user/login", this.loginForm); //调用login模块的actions,把token存到vuex
         // this.loading = false;
         //登录以后实现页面跳转 但是刷新过后,token消失,需要用cookie实现持久化
         this.$router.push("/");

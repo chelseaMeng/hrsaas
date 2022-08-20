@@ -37,12 +37,12 @@ module.exports = {
       errors: true,
     },
     proxy:{
-      '/api':{
-        target:'http://42.192.129.12:3001/',//跨域请求地址
+      '/api':{ //在请求的所有接口中找是否有以/api开头的,有就进入下面的代码
+        target:'http://42.192.129.12:3001/',//只要接口中含有/api就跨域请求这个地址
         changeOrigin: true // 只有这个值为true的情况下 才表示开启跨域
       }
     }
-    // before: require("./mock/mock-server.js"),
+    // before: require("./mock/mock-server.js"),  //模拟数据的代码
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
