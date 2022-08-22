@@ -83,7 +83,7 @@ export default {
       //标签校验通过时候
       //validate()
       try {
-        await this.$refs.roleDialogForm.validate();
+        await this.$refs.roleDialogForm.validate(); //返回一个promise
         //新增接口
         this.loading = true;
         //表单数据有id就是修改角色否则新增角色
@@ -99,6 +99,7 @@ export default {
       } catch (e) {
         console.log(e);
       } finally {
+        //不管成功失败都会进入finally
         this.loading = false;
       }
     },

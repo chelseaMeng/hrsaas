@@ -19,6 +19,7 @@
           <el-table-column prop="description" label="描述"> </el-table-column>
 
           <el-table-column prop="address" label="操作" width="320">
+            <!-- 作用域插槽 -->
             <template slot-scope="scope">
               <el-button type="success">分配权限</el-button>
               <el-button type="primary" @click="edit(scope.row)"
@@ -47,8 +48,9 @@
       </el-tab-pane>
 
       <!-- 公司信息 -->
-      <el-tab-pane label="公司信息" name="first">
-        <el-alert title="对公司名称、公司地址、营业执照、公司地址的更新,将使得公司资料被重新审核，请谨慎修改" type="info" show-icon> </el-alert>
+      <el-tab-pane label="公司信息" name="second">
+        <el-alert title="对公司名称、公司地址、营业执照、公司地区的更新，将使得公司资料被重新审核，请谨慎修改" type="info" show-icon /> 
+        <!-- form表单 -->
         <el-form label-width="120px" style="margin-top: 50px">
           <el-form-item label="公司名称">
             <el-input disabled style="width: 400px" v-model='formData.name'/>
@@ -57,12 +59,13 @@
             <el-input disabled style="width: 400px" v-model='formData.companyAddress'/>
           </el-form-item>
           <el-form-item label="邮箱">
-            <el-input disabled style="width: 400px" v-model='formData.mailbox'/>
+            <el-input disabled style="width: 400px"  v-model='formData.mailbox'/>
           </el-form-item>
           <el-form-item label="备注">
             <el-input type="textarea" :rows="3" disabled style="width: 400px" v-model='formData.remarks'/>
           </el-form-item>
         </el-form>
+
       </el-tab-pane>
     </el-tabs>
     <!-- 弹出框 -->
@@ -91,6 +94,7 @@ export default {
       total: 0,
       loading: false,
       dialogVisible: false,
+      formData:{}//接收公司信息数据
     };
   },
   computed:{
@@ -131,20 +135,25 @@ export default {
       this.$refs.roleDialog.roleForm = { ...row };
     },
     async del(id) {
+      //删除要进行  二次确认,用element-ui中的MessageBox组件 
       console.log(id);
       try {
-        await this.$confirm("是否确认删除该角色?", "提示", { type: "warning" });
+        await this.$confirm("是否确认删除该角色?", "提示", { type: "warning" }); //返回一个promise, { type: "warning" }是一个小图标
+        //确认删除之后执行的操作
         await deleteRole(id);
         this.$message.success("角色删除成功");
+         this.getRoleList();
         this.page.page = 1;
-        this.getRoleList();
+       
         console.log("=====");
       } catch (e) {
         console.log(e);
       }
     },
+    //公司信息
     async getCompanyInfo(){
-      this.forData=await getCompanyInfo(this.companyId)
+      this.formData=await getCompanyInfo(this.companyId)
+    
     }
   },
 };
